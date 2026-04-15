@@ -1,1 +1,319 @@
-'use client';\n\nimport { useState } from 'react';\nimport Link from 'next/link';\nimport { Mail, Lock, User, Eye, EyeOff, Loader, Check } from 'lucide-react';\n\nexport default function RegistroPage() {\n  const [formData, setFormData] = useState({\n    name: '',\n    email: '',\n    password: '',\n    confirmPassword: '',\n  });\n  const [agreedToTerms, setAgreedToTerms] = useState(false);\n  const [isLoading, setIsLoading] = useState(false);\n  const [showPassword, setShowPassword] = useState(false);\n  const [showConfirmPassword, setShowConfirmPassword] = useState(false);\n  const [error, setError] = useState('');\n  const [success, setSuccess] = useState(false);\n\n  const validateForm = (): boolean => {\n    if (!formData.name.trim()) {\n      setError('Por favor ingresa tu nombre');\n      return false;\n    }\n\n    if (formData.name.trim().length < 2) {\n      setError('El nombre debe tener al menos 2 caracteres');\n      return false;\n    }\n\n    if (!formData.email) {\n      setError('Por favor ingresa tu correo electrónico');\n      return false;\n    }\n\n    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {\n      setError('Por favor ingresa un correo válido');\n      return false;\n    }\n\n    if (!formData.password) {\n      setError('Por favor ingresa una contraseña');\n      return false;\n    }\n\n    if (formData.password.length < 6) {\n      setError('La contraseña debe tener al menos 6 caracteres');\n      return false;\n    }\n\n    if (formData.password !== formData.confirmPassword) {\n      setError('Las contraseñas no coinciden');\n      return false;\n    }\n\n    if (!agreedToTerms) {\n      setError('Debes aceptar los términos y condiciones');\n      return false;\n    }\n\n    return true;\n  };\n\n  const handleSubmit = async (e: React.FormEvent) => {\n    e.preventDefault();\n    setError('');\n    setSuccess(false);\n\n    if (!validateForm()) {\n      return;\n    }\n\n    setIsLoading(true);\n\n    try {\n      // Simulate API call\n      await new Promise((resolve) => setTimeout(resolve, 1500));\n      console.log('Register:', formData);\n\n      // Show success state\n      setSuccess(true);\n      setFormData({ name: '', email: '', password: '', confirmPassword: '' });\n      setAgreedToTerms(false);\n\n      // TODO: Add actual registration logic\n      // Redirect after success\n      setTimeout(() => {\n        // window.location.href = '/login';\n      }, 2000);\n    } catch (err) {\n      setError('Ocurrió un error. Intenta de nuevo.');\n    } finally {\n      setIsLoading(false);\n    }\n  };\n\n  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {\n    const { name, value } = e.target;\n    setFormData((prev) => ({\n      ...prev,\n      [name]: value,\n    }));\n  };\n\n  if (success) {\n    return (\n      <div className="min-h-screen bg-gradient-to-br from-[#0F1B2D] via-[#1a2f4d] to-[#0F1B2D] flex items-center justify-center px-4 py-12">\n        <div className="w-full max-w-md">\n          <div className="bg-[#1a2f4d] rounded-2xl shadow-2xl p-8 border border-[#2d4563] text-center">\n            <div className="flex justify-center mb-6">\n              <div className="bg-gradient-to-br from-[#10B981] to-[#059669] rounded-full p-4">\n                <Check className="h-8 w-8 text-white" />\n              </div>\n            </div>\n\n            <h2 className="text-2xl font-bold text-white mb-3">¡Cuenta Creada!</h2>\n            <p className="text-gray-400 mb-6">\n              Tu cuenta ha sido creada exitosamente. Redirigiendo al inicio de sesión...\n            </p>\n\n            <Link\n              href="/login"\n              className="inline-block bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-semibold py-3 px-6 rounded-lg transition"\n            >\n              Ir a Iniciar Sesión\n            </Link>\n          </div>\n        </div>\n      </div>\n    );\n  }\n\n  return (\n    <div className="min-h-screen bg-gradient-to-br from-[#0F1B2D] via-[#1a2f4d] to-[#0F1B2D] flex items-center justify-center px-4 py-12">\n      <div className="w-full max-w-md">\n        {/* Card */}\n        <div className="bg-[#1a2f4d] rounded-2xl shadow-2xl p-8 border border-[#2d4563]">\n          {/* Logo/Brand */}\n          <div className="mb-8 text-center">\n            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-lg mb-4">\n              <span className="text-white font-bold text-lg">T</span>\n            </div>\n            <h1 className="text-2xl font-bold text-white">Tractic</h1>\n            <p className="text-gray-400 text-sm mt-2">Crea tu cuenta</p>\n          </div>\n\n          {/* Form */}\n          <form onSubmit={handleSubmit} className="space-y-4">\n            {/* Name Field */}\n            <div>\n              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">\n                Nombre Completo\n              </label>\n              <div className="relative">\n                <User className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />\n                <input\n                  id="name"\n                  type="text"\n                  name="name"\n                  value={formData.name}\n                  onChange={handleInputChange}\n                  placeholder="Juan Pérez"\n                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"\n                />\n              </div>\n            </div>\n\n            {/* Email Field */}\n            <div>\n              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">\n                Correo Electrónico\n              </label>\n              <div className="relative">\n                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />\n                <input\n                  id="email"\n                  type="email"\n                  name="email"\n                  value={formData.email}\n                  onChange={handleInputChange}\n                  placeholder="tu@correo.com"\n                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"\n                />\n              </div>\n            </div>\n\n            {/* Password Field */}\n            <div>\n              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">\n                Contraseña\n              </label>\n              <div className="relative">\n                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />\n                <input\n                  id="password"\n                  type={showPassword ? 'text' : 'password'}\n                  name="password"\n                  value={formData.password}\n                  onChange={handleInputChange}\n                  placeholder="••••••••"\n                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"\n                />\n                <button\n                  type="button"\n                  onClick={() => setShowPassword(!showPassword)}\n                  className="absolute right-4 top-3.5 text-gray-500 hover:text-gray-300 transition"\n                >\n                  {showPassword ? (\n                    <EyeOff className="h-5 w-5" />\n                  ) : (\n                    <Eye className="h-5 w-5" />\n                  )}\n                </button>\n              </div>\n            </div>\n\n            {/* Confirm Password Field */}\n            <div>\n              <label\n                htmlFor="confirmPassword"\n                className="block text-sm font-medium text-gray-300 mb-2"\n              >\n                Confirmar Contraseña\n              </label>\n              <div className="relative">\n                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />\n                <input\n                  id="confirmPassword"\n                  type={showConfirmPassword ? 'text' : 'password'}\n                  name="confirmPassword"\n                  value={formData.confirmPassword}\n                  onChange={handleInputChange}\n                  placeholder="••••••••"\n                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"\n                />\n                <button\n                  type="button"\n                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}\n                  className="absolute right-4 top-3.5 text-gray-500 hover:text-gray-300 transition"\n                >\n                  {showConfirmPassword ? (\n                    <EyeOff className="h-5 w-5" />\n                  ) : (\n                    <Eye className="h-5 w-5" />\n                  )}\n                </button>\n              </div>\n            </div>\n\n            {/* Terms Checkbox */}\n            <div className="flex items-start gap-3 pt-2">\n              <input\n                id="terms"\n                type="checkbox"\n                checked={agreedToTerms}\n                onChange={(e) => setAgreedToTerms(e.target.checked)}\n                className="mt-1 w-4 h-4 bg-[#0F1B2D] border border-[#2d4563] rounded accent-[#10B981] cursor-pointer"\n              />\n              <label htmlFor="terms" className="text-sm text-gray-400 cursor-pointer">\n                Acepto los{'  '}\n                <Link href="#" className="text-[#10B981] hover:text-[#059669] transition">\n                  términos y condiciones\n                </Link>{'  '}\n                y la{'  '}\n                <Link href="#" className="text-[#10B981] hover:text-[#059669] transition">\n                  política de privacidad\n                </Link>\n              </label>\n            </div>\n\n            {/* Error Message */}\n            {error && (\n              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">\n                <p className="text-red-400 text-sm">{error}</p>\n              </div>\n            )}\n\n            {/* Submit Button */}\n            <button\n              type="submit"\n              disabled={isLoading}\n              className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"\n            >\n              {isLoading && <Loader className="h-5 w-5 animate-spin" />}\n              Crear Cuenta\n            </button>\n          </form>\n\n          {/* Login Link */}\n          <div className="mt-8 text-center">\n            <p className="text-gray-400 text-sm">\n              ¿Ya tienes cuenta?{'  '}\n              <Link\n                href="/login"\n                className="text-[#10B981] hover:text-[#059669] font-semibold transition"\n              >\n                Inicia Sesión\n              </Link>\n            </p>\n          </div>\n        </div>\n\n        {/* Footer */}\n        <div className="mt-8 text-center text-gray-500 text-xs space-y-2">\n          <div className="flex gap-4 justify-center">\n            <Link href="#" className="hover:text-gray-300 transition">\n              Términos de Servicio\n            </Link>\n            <span>•</span>\n            <Link href="#" className="hover:text-gray-300 transition">\n              Privacidad\n            </Link>\n          </div>\n        </div>\n      </div>\n    </div>\n  );\n}
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { Mail, Lock, User, Eye, EyeOff, Loader, Check } from 'lucide-react';
+
+export default function RegistroPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const validateForm = (): boolean => {
+    if (!formData.name.trim()) {
+      setError('Por favor ingresa tu nombre');
+      return false;
+    }
+
+    if (formData.name.trim().length < 2) {
+      setError('El nombre debe tener al menos 2 caracteres');
+      return false;
+    }
+
+    if (!formData.email) {
+      setError('Por favor ingresa tu correo electrÃ³nico');
+      return false;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Por favor ingresa un correo vÃ¡lido');
+      return false;
+    }
+
+    if (!formData.password) {
+      setError('Por favor ingresa una contraseÃ±a');
+      return false;
+    }
+
+    if (formData.password.length < 6) {
+      setError('La contraseÃ±a debe tener al menos 6 caracteres');
+      return false;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseÃ±as no coinciden');
+      return false;
+    }
+
+    if (!agreedToTerms) {
+      setError('Debes aceptar los tÃ©rminos y condiciones');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log('Register:', formData);
+
+      // Show success state
+      setSuccess(true);
+      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+      setAgreedToTerms(false);
+
+      // TODO: Add actual registration logic
+      // Redirect after success
+      setTimeout(() => {
+        // window.location.href = '/login';
+      }, 2000);
+    } catch (err) {
+      setError('OcurriÃ³ un error. Intenta de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0F1B2D] via-[#1a2f4d] to-[#0F1B2D] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="bg-[#1a2f4d] rounded-2xl shadow-2xl p-8 border border-[#2d4563] text-center">
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-br from-[#10B981] to-[#059669] rounded-full p-4">
+                <Check className="h-8 w-8 text-white" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-white mb-3">Â¡Cuenta Creada!</h2>
+            <p className="text-gray-400 mb-6">
+              Tu cuenta ha sido creada exitosamente. Redirigiendo al inicio de sesiÃ³n...
+            </p>
+
+            <Link
+              href="/login"
+              className="inline-block bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-semibold py-3 px-6 rounded-lg transition"
+            >
+              Ir a Iniciar SesiÃ³n
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#0F1B2D] via-[#1a2f4d] to-[#0F1B2D] flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Card */}
+        <div className="bg-[#1a2f4d] rounded-2xl shadow-2xl p-8 border border-[#2d4563]">
+          {/* Logo/Brand */}
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-lg mb-4">
+              <span className="text-white font-bold text-lg">T</span>
+            </div>
+            <h1 className="text-2xl font-bold text-white">Tractic</h1>
+            <p className="text-gray-400 text-sm mt-2">Crea tu cuenta</p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Field */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                Nombre Completo
+              </label>
+              <div className="relative">
+                <User className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />
+                <input
+                  id="name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Juan PÃ©rez"
+                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"
+                />
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                Correo ElectrÃ³nico
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="tu@correo.com"
+                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                ContraseÃ±a
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
+                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-3.5 text-gray-500 hover:text-gray-300 transition"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Confirmar ContraseÃ±a
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-500" />
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
+                  className="w-full bg-[#0F1B2D] border border-[#2d4563] rounded-lg py-3 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-4 top-3.5 text-gray-500 hover:text-gray-300 transition"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-start gap-3 pt-2">
+              <input
+                id="terms"
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-1 w-4 h-4 bg-[#0F1B2D] border border-[#2d4563] rounded accent-[#10B981] cursor-pointer"
+              />
+              <label htmlFor="terms" className="text-sm text-gray-400 cursor-pointer">
+                Acepto los{' '}
+                <Link href="#" className="text-[#10B981] hover:text-[#059669] transition">
+                  tÃ©rminos y condiciones
+                </Link>{' '}
+                y la{' '}
+                <Link href="#" className="text-[#10B981] hover:text-[#059669] transition">
+                  polÃ­tica de privacidad
+                </Link>
+              </label>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
+            >
+              {isLoading && <Loader className="h-5 w-5 animate-spin" />}
+              Crear Cuenta
+            </button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-8 text-center">
+            <p className="text-gray-400 text-sm">
+              Â¿Ya tienes cuenta?{' '}
+              <Link
+                href="/login"
+                className="text-[#10B981] hover:text-[#059669] font-semibold transition"
+              >
+                Inicia SesiÃ³n
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-gray-500 text-xs space-y-2">
+          <div className="flex gap-4 justify-center">
+            <Link href="#" className="hover:text-gray-300 transition">
+              TÃ©rminos de Servicio
+            </Link>
+            <span>â¢</span>
+            <Link href="#" className="hover:text-gray-300 transition">
+              Privacidad
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
